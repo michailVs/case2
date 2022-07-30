@@ -50,6 +50,13 @@ const CaseList = () => {
                 ? <button onClick={caseOpen}>Открыть кейс за 6000 руб.</button>
                 : <CaseItem setOpen={caseOpen} csi={randomItemArr} saleItem={saleItem}/>
             }
+            {caseItem.map(item => 
+                <div>
+                    <img src={item.src} alt={item.title} />
+                    <span>{item.title} </span>
+                    <span>| {item.price} руб.</span>
+                </div>
+            )}
         </div>
     )
 }
