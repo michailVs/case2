@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import CaseItem from './CaseItem'
+import InventoryItem from './InventoryItem'
 
 const CaseList = () => {
     const caseItem = [
@@ -11,14 +12,16 @@ const CaseList = () => {
     ]
     const [isOpen, setOpen] = useState(false)
     const [balance, setBalance] = useState(10000)
+    const [inventory, setInventory] = useState([])
     function caseOpen() {
         if (isOpen){
             setOpen(false)
+            setInventory([...inventory, ...randomItemArr])
             setRandomItemArr([])
         } else {
             setOpen(true)
             randomItem()
-            setBalance(balance - 6000)
+            !randomItemArr.length ? setBalance(balance - 6000) : setBalance(balance)
         }
         if (balance < 6000) {
             setOpen(true)
@@ -41,7 +44,15 @@ const CaseList = () => {
     }
     const saleItem = (item) => {
         setBalance(balance + item.price)
-        caseOpen()
+        setOpen(false)
+        setRandomItemArr([])
+        if (balance < 6000) {
+            setOpen(true)
+        }
+    }
+    const saleInvItem = (item) => {
+        setBalance(balance + item.price)
+        setInventory(inventory.filter(i => i.id !== item.id))
     }
     return (
         <div>
@@ -51,12 +62,17 @@ const CaseList = () => {
                 : <CaseItem setOpen={caseOpen} csi={randomItemArr} saleItem={saleItem}/>
             }
             {caseItem.map(item => 
-                <div>
+                <div key={item.id}>
                     <img src={item.src} alt={item.title} />
                     <span>{item.title} </span>
                     <span>| {item.price} руб.</span>
+                    <hr />
                 </div>
             )}
+            {!inventory.length
+            ? <h2>Инвентарь:</h2>
+            : <InventoryItem invItem={inventory} saleItem={saleInvItem}/>
+            }
         </div>
     )
 }
